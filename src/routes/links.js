@@ -6,65 +6,68 @@ const path = require('path')
 const multer = require('multer');
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb){
-        cb(null,'uploads/')
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
     },
-    filename: function(req,file,cb){
+    filename: function (req, file, cb) {
         cb(null, file.originalname + path.extname(file.originalname))
     }
 })
-
-const upload = multer({storage})
-
-
+const upload = multer({
+    storage
+})
 
 const pool = require('../database');
-const { isLoggedIn } = require('../lib/auth');
+const {
+    isLoggedIn
+} = require('../lib/auth');
 
-router.get('/add', isLoggedIn, (req, res) => {    
+router.get('/add', isLoggedIn, (req, res) => {
     res.render('links/add')
 });
 
 //ADICIONAR NOVO USUARIO, SOMENTE ADMIN
-router.get('/newuser', isLoggedIn, (req, res) => {    
+router.get('/newuser', isLoggedIn, (req, res) => {
     res.render('links/newuser')
 });
 
-router.post('/newuser', isLoggedIn, (req, res) => {    
+router.post('/newuser', isLoggedIn, (req, res) => {
     const nomeusu = req.body.nomeusu;
-    const senha = req.body.senha; 
+    const senha = req.body.senha;
     const fullname = req.body.fullname;
 
     pool.query(`INSERT INTO sankhya.AD_TBLOGIN (NOMEUSU, SENHA, fullname) VALUES('${nomeusu}','${senha}','${fullname}')`);
-    
+
     res.redirect('/links/allogin')
 });
 
 //ADICIONAR CONTRATOS AOS NOVOS USUÁRIOS, SOMENTE ADMIN
-router.get('/newcont', isLoggedIn, async (req, res) => {  
-    
+router.get('/newcont', isLoggedIn, async (req, res) => {
+
     const links = await pool.query(`SELECT CODLOGIN,fullname,NOMEUSU,ADMINISTRADOR
     FROM sankhya.AD_TBLOGIN 
-    ORDER BY NOMEUSU `); 
-   
-    res.render('links/newcont',{lista: links.recordset})
+    ORDER BY NOMEUSU `);
+
+    res.render('links/newcont', {
+        lista: links.recordset
+    })
 });
 
-router.post('/newcont', isLoggedIn, async (req, res) => {  
+router.post('/newcont', isLoggedIn, async (req, res) => {
 
     const contrato = req.body.contrato;
-    const login = req.body.login; 
+    const login = req.body.login;
 
     pool.query(`INSERT INTO sankhya.AD_TBACESSO (NUM_CONTRATO, ID_LOGIN) VALUES('${contrato}','${login}')`);
-    
+
     req.flash('success', 'O Contrato foi Vincunlado com Sucesso!!!!')
     res.redirect('/links/newcont')
 });
 
 //ADD OS
 router.get('/orderserv', isLoggedIn, async (req, res) => {
-    const idlogin = req.user.CODLOGIN  
-    
+    const idlogin = req.user.CODLOGIN
+
     //contrato
     const links = await pool.query(`SELECT DISTINCT L.NUM_CONTRATO, PAR.NOMEPARC,
     PAR.CODPARC,  CON.CODUSUOS , L.ID_LOGIN,
@@ -90,8 +93,8 @@ router.get('/orderserv', isLoggedIn, async (req, res) => {
     AND PS.SITPROD IN ('A','B')
     AND PD.USOPROD IN ('S', 'R')
     AND TC.PRIORIDADE IS NULL
-    ORDER BY CON.AD_CIRCUITO`);     
-    
+    ORDER BY CON.AD_CIRCUITO`);
+
     const links2 = await pool.query(`SELECT DISTINCT 
     CONVERT(VARCHAR(6),con.NUMCONTRATO,103)+' - ' +CONVERT(VARCHAR(30),PS.CODPROD,103)+' - ' + RIGHT(''+ISNULL(PD.DESCRPROD,''),40) as CONTATO
     from sankhya.TGFPAR P
@@ -107,22 +110,28 @@ router.get('/orderserv', isLoggedIn, async (req, res) => {
     --OR PD.USOPROD='P'
     order by CONTATO`);
 
-    res.render('links/testes', {geral: links.recordset, cont: links2.recordset})
+    res.render('links/testes', {
+        geral: links.recordset,
+        cont: links2.recordset
+    })
 });
 
-router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) => {    
+router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) => {
 
     //geração automática de OS
-    const links = await pool.query('select top (1) NUMOS +1 as NUMOS from sankhya.TCSOSE order by numos desc');  
-    const numos = Object.values(links.recordset[0])       
+    const links = await pool.query('select top (1) NUMOS +1 as NUMOS from sankhya.TCSOSE order by numos desc');
+    const numos = Object.values(links.recordset[0])
 
     const texto = req.body.texto;
     const sdm = req.body.sdm;
-    const filetoupload= upload
-    const contrato = req.body.contrato; 
-    const parceiro = req.body.codparc;   
-    const contato = req.body.atualiza; 
-    const slccont = req.body.sla;  
+    const filetoupload = upload
+    const contrato = req.body.contrato;
+    const parceiro = req.body.codparc;
+    const contato = req.body.atualiza;
+    const slccont = req.body.sla;
+
+    const t1 = texto
+    const textofin = t1.replace("'", "`");
 
     //verificação cód prioridade sla
     const links2 = await pool.query(`SELECT DISTINCT 
@@ -134,22 +143,22 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     WHERE CON.NUMCONTRATO='${contrato}'   
     AND CON.ATIVO = 'S'  
     AND TC.PRIORIDADE = '${slccont}'`);
-    const prioridade = Object.values(links2.recordset[0]) 
-    
+    const prioridade = Object.values(links2.recordset[0])
+
     await pool.query(`INSERT INTO sankhya.TCSOSE (NUMOS,NUMCONTRATO,DHCHAMADA,DTPREVISTA,CODPARC,CODCONTATO,CODATEND,CODUSURESP,DESCRICAO,SITUACAO,CODCOS,CODCENCUS,CODOAT,POSSUISLA,AD_SDM) VALUES 
-    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${texto}','P','',30101,1000000,'S','${sdm}');`);
+    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${textofin}','P','',30101,1000000,'S','${sdm}');`);
     await pool.query(`INSERT INTO SANKHYA.TCSITE (NUMOS,NUMITEM,CODSERV,CODPROD,CODUSU,CODOCOROS,CODUSUREM,DHENTRADA,DHPREVISTA,CODSIT,COBRAR,RETRABALHO,PRIORIDADE) VALUES 
-    ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),177,'N','N','${slccont}');`); 
-    
+    ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),177,'N','N','${slccont}');`);
+
     req.flash('success', 'Ordem De Serviço Criada com Sucesso!!!!')
     res.redirect('/links')
-    
+
 });
 
 //PAGINAS DATATABLES
 //LISTAR TODAS AS OS ABERTAS
-router.get('/', isLoggedIn,  async (req, res) => {
-    const idlogin = req.user.CODLOGIN    
+router.get('/', isLoggedIn, async (req, res) => {
+    const idlogin = req.user.CODLOGIN
     const links = await pool.query(`SELECT 
     C.NUMCONTRATO, 
     P.NOMEPARC,    
@@ -190,12 +199,14 @@ router.get('/', isLoggedIn,  async (req, res) => {
     AND I.NUMITEM = (SELECT MAX(NUMITEM) FROM SANKHYA.TCSITE WHERE NUMOS = O.NUMOS AND TERMEXEC IS NULL)
     AND O.DHCHAMADA >=  '01/01/2021'
     AND AC.ID_LOGIN= ${idlogin}`);
-    res.render('links/list', { lista: links.recordset });
+    res.render('links/list', {
+        lista: links.recordset
+    });
 });
 
 //LISTAR TODAS AS OS FECHADAS
-router.get('/osclose', isLoggedIn,  async (req, res) => {
-    const idlogin = req.user.CODLOGIN    
+router.get('/osclose', isLoggedIn, async (req, res) => {
+    const idlogin = req.user.CODLOGIN
     const links = await pool.query(`SELECT 
     C.NUMCONTRATO, 
     P.NOMEPARC,    
@@ -243,12 +254,14 @@ router.get('/osclose', isLoggedIn,  async (req, res) => {
     AND O.DHCHAMADA >=  '01/01/2021'
     AND O.DTFECHAMENTO >= DATEADD(DAY, -60, GETDATE())
     AND AC.ID_LOGIN= ${idlogin}`);
-    res.render('links/osclose', { lista: links.recordset });
+    res.render('links/osclose', {
+        lista: links.recordset
+    });
 });
 
 //listar todas as OS registradas para o parceiro
-router.get('/all', isLoggedIn,  async (req, res) => {
-    const idlogin = req.user.CODLOGIN    
+router.get('/all', isLoggedIn, async (req, res) => {
+    const idlogin = req.user.CODLOGIN
     const links = await pool.query(`SELECT 
     C.NUMCONTRATO, 
     P.NOMEPARC,    
@@ -300,41 +313,52 @@ router.get('/all', isLoggedIn,  async (req, res) => {
     AND O.DHCHAMADA >= '01/01/2021'
     AND O.DHCHAMADA >= DATEADD(DAY, -60, GETDATE())
     AND AC.ID_LOGIN= ${idlogin}`);
-    res.render('links/all', { lista: links.recordset });
+    res.render('links/all', {
+        lista: links.recordset
+    });
 });
 
 //listar todos os usuários (login) cadastrados
-router.get('/allogin', isLoggedIn,  async (req, res) => {
-    const idlogin = req.user.CODLOGIN    
+router.get('/allogin', isLoggedIn, async (req, res) => {
+    const idlogin = req.user.CODLOGIN
     const links = await pool.query(`SELECT CODLOGIN,fullname,NOMEUSU,ADMINISTRADOR
     FROM sankhya.AD_TBLOGIN`);
-    res.render('links/allogin', { lista: links.recordset });
+    res.render('links/allogin', {
+        lista: links.recordset
+    });
 });
 
 //remover parceiro
-router.get('/delete/:id', isLoggedIn,  async (req, res) => {
-    const {id}  = req.params;
+router.get('/delete/:id', isLoggedIn, async (req, res) => {
+    const {
+        id
+    } = req.params;
     await pool.query(`DELETE FROM sankhya.AD_TBPARCEIRO WHERE ID = ${id}`);
     req.flash('success', 'Link Removed Successfully');
     res.redirect('/links');
 });
 
 //editar parceiro - exibição tela
-router.get('/edit/:id', isLoggedIn,  async (req, res) => {
-    const {id}  = req.params;
+router.get('/edit/:id', isLoggedIn, async (req, res) => {
+    const {
+        id
+    } = req.params;
     const links = await pool.query(`SELECT * FROM sankhya.AD_TBPARCEIRO WHERE ID = ${id}`);
-    res.render('links/edit', { lista: links.recordset[0] })
-    /*//req.flash('success', 'Link Removed Successfully');
-    res.redirect('/links'); */
+    res.render('links/edit', {
+        lista: links.recordset[0]
+    })
+
 });
 
 //update
 router.post('/edit/:id', async (req, res) => {
-    const {id} = req.params;
-    const nome = req.body.nome.substring(0,100);
-    const endereco = req.body.endereco.substring(0,100);
+    const {
+        id
+    } = req.params;
+    const nome = req.body.nome.substring(0, 100);
+    const endereco = req.body.endereco.substring(0, 100);
     await pool.query(`UPDATE sankhya.AD_TBPARCEIRO set NOME=${nome} ENDERECO=${endereco} WHERE ID = ${id}`);
     res.redirect('/links');
 });
 
-module.exports = router; 
+module.exports = router;
