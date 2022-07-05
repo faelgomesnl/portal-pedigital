@@ -24,7 +24,7 @@
 
                                 {{#each geral}}
                                 <option value="{{NUM_CONTRATO}}" id="{{CODPARC}}" title="{{CODPROD}}" ren2="{{CIDADE}}"
-                                    ren3="{{LOGRADOURO}}" ren4="{{NOMEPARC}}">
+                                    ren3="{{LOGRADOURO}}" ren4="{{NOMEPARC}}" ren5="{{ID_LOGIN}}">
                                     {{AD_CIRCUITO}}
                                 </option>
                                 {{/each}}
@@ -45,7 +45,7 @@
 
                         <div class="form-group" id="updiv">
                             <select class="select-css" name="contato" id="aqui" onChange="update2()" data-limit='200'>
-                                <option value="" disabled selected> Escolha o Produto</option>
+                                <option value="" disabled selected></option>
 
                             </select>
                         </div>
@@ -66,6 +66,7 @@
                             <input hidden id="codprod" name="codprod">
                             <input hidden id="atualiza" name="atualiza" style='width:100%'>
                             <input hidden id="sla" name="sla">
+                            <input hidden id="loginuser" name="loginuser">
 
                             {{!-- exibição enderaço --}}
                             <input type="text" id="cidade" name="cidade" disabled="disabled" style='width:100%'>
@@ -109,12 +110,14 @@
         var ren2 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren2');
         var ren3 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren3');
         var ren4 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren4');
+        var ren5 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren5');
 
         //const slacc = parseInt(ren) 
         //document.getElementById('sla').value = slacc
         document.getElementById('cidade').value = ren2
         document.getElementById('logradouro').value = ren3
         document.getElementById('parceiro').value = ren4
+        document.getElementById('loginuser').value = ren5
 
         //busca valor dos contatos
         var select = document.getElementById('list2');

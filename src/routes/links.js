@@ -130,6 +130,7 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     const parceiro = req.body.codparc;
     const contato = req.body.atualiza;
     const slccont = req.body.sla;
+    const userlog = req.body.loginuser;
 
     //verificação cód prioridade sla
     const links2 = await pool.query(`SELECT DISTINCT 
@@ -143,12 +144,12 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     AND TC.PRIORIDADE = '${slccont}'`);
     const prioridade = Object.values(links2.recordset[0])
 
-    await pool.query(`INSERT INTO sankhya.TCSOSE (NUMOS,NUMCONTRATO,DHCHAMADA,DTPREVISTA,CODPARC,CODCONTATO,CODATEND,CODUSURESP,DESCRICAO,SITUACAO,CODCOS,CODCENCUS,CODOAT,POSSUISLA,AD_SDM) VALUES 
-    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${texto}','P','',30101,1000000,'S','${sdm}');`);
+    await pool.query(`INSERT INTO sankhya.TCSOSE (NUMOS,NUMCONTRATO,DHCHAMADA,DTPREVISTA,CODPARC,CODCONTATO,CODATEND,CODUSURESP,DESCRICAO,SITUACAO,CODCOS,CODCENCUS,CODOAT,AD_LOGIN,POSSUISLA,AD_SDM) VALUES 
+    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${texto}','P','',30101,1000000,'${userlog}','S','${sdm}');`);
     await pool.query(`INSERT INTO SANKHYA.TCSITE (NUMOS,NUMITEM,CODSERV,CODPROD,CODUSU,CODOCOROS,CODUSUREM,DHENTRADA,DHPREVISTA,CODSIT,COBRAR,RETRABALHO,PRIORIDADE) VALUES 
     ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),177,'N','N','${slccont}');`);
 
-    req.flash('success', 'Ordem De Serviço Criada com Sucesso!!!!')
+    req.flash('success', 'Ordem De Serviço Criada com Sucesso!!!! Nº ', numos)
     res.redirect('/links')
 });
 

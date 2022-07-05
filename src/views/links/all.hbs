@@ -78,7 +78,7 @@
                             <td>{{NUMITEM}}</td>
                             <td>{{ABERTURA}}</td>
                             <td hidden>{{ABERTURA2}}</td>
-                            <td hidden>{{DT_FECHAMENTO}}</td>
+                            {{!-- <td>{{DT_FECHAMENTO}}</td> --}}
                             <td>{{DT_EXECUCAO}}</td>
                             <td>{{DEFEITO}}</td>
                             <td>{{SOLUCAO}}</td>
@@ -93,11 +93,8 @@
                         {{/each}}
                     </tbody>
                 </table>
-
             </div>
-
         </div>
-
     </div>
     {{else}}
     <div class="container">
@@ -148,7 +145,7 @@
                             <td>{{NUMITEM}}</td>
                             <td>{{ABERTURA}}</td>
                             <td hidden>{{ABERTURA2}}</td>
-                            <td>{{DT_FECHAMENTO}}</td>
+                            {{!-- <td>{{DT_FECHAMENTO}}</td> --}}
                             <td>{{DT_EXECUCAO}}</td>
                             <td>{{DEFEITO}}</td>
                             <td>{{SOLUCAO}}</td>
@@ -181,8 +178,6 @@
     <script type="text/javascript"
         src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.3/b-colvis-1.6.3/b-flash-1.6.3/b-html5-1.6.3/b-print-1.6.3/cr-1.5.2/fc-3.3.1/fh-3.1.7/kt-2.5.2/r-2.2.5/rg-1.1.2/rr-1.2.7/sc-2.0.2/sp-1.1.1/sl-1.3.1/datatables.min.js"></script>
 
-
-
     <script>
 
         var tablevlr = $('#table').DataTable({
@@ -204,10 +199,6 @@
             searching: true,
             //habilita ou desabilita a ordenação das informações
             ordering: true,
-
-
-
-
             //aqui estou traduzindo alguns campos da planilha para portugues
             language: {
                 "sEmptyTable": "Nenhum registro encontrado",
@@ -426,9 +417,6 @@
                 table.draw();
             });
         });
-
-
-
     </script>
 </body>
 
