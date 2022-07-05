@@ -1,5 +1,4 @@
- 
-  <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/styles.css">
 
 <div class="container p-4">
     <div class="row">
@@ -7,85 +6,79 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form action="/links/orderserv" method="POST" id="frm_" enctype="multipart/form-data">                    
-                        
+                    <form action="/links/orderserv" method="POST" id="frm_" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <textarea type="text" name="texto" class="form-control"
+                                placeholder="Informe o defeito e o protocolo referente ao Circuito"></textarea>
+                        </div>
 
                         <div class="form-group">
-                            <textarea type="text" name="texto" class="form-control" placeholder="Informe o defeito e o protocolo referente ao Circuito"></textarea>
-                        </div> 
-
-                        <div class="form-group">
-                            <input type="text" id='sdm' name="sdm" class="form-control" placeholder="Informe SDM" required>
-                        </div>                       
+                            <input type="text" id='sdm' name="sdm" class="form-control" placeholder="Informe SDM"
+                                required>
+                        </div>
 
                         <div class="form-group">
                             <b>Defina Um Circuito</b>
                             <select class="select-css" name="contrato" id="list" onChange="update()">
                                 <option selected disabled></option>
-                                
-                                {{#each geral}}                                    
-                                    <option value="{{NUM_CONTRATO}}" 
-                                            id="{{CODPARC}}" 
-                                            title="{{CODPROD}}"                                            
-                                            ren2="{{CIDADE}}"
-                                            ren3="{{LOGRADOURO}}"
-                                            ren4="{{NOMEPARC}}" >
-                                                {{AD_CIRCUITO}}
-                                    </option>   
+
+                                {{#each geral}}
+                                <option value="{{NUM_CONTRATO}}" id="{{CODPARC}}" title="{{CODPROD}}" ren2="{{CIDADE}}"
+                                    ren3="{{LOGRADOURO}}" ren4="{{NOMEPARC}}">
+                                    {{AD_CIRCUITO}}
+                                </option>
                                 {{/each}}
                             </select>
                         </div>
 
-                        <div class="form-group" >
-                            <select class="select-css" name="contato" id="list2" onChange="update()" hidden>    
-                                
-                                {{#each cont}}                                    
-                                    <option value="{{CONTATO}}"
-                                    id="{{CODCONT}}" >
-                                                {{CONTATO}}
-                                    </option>                                   
-                                    
+                        <div class="form-group">
+                            <select class="select-css" name="contato" id="list2" onChange="update()" hidden>
+
+                                {{#each cont}}
+                                <option value="{{CONTATO}}" id="{{CODCONT}}">
+                                    {{CONTATO}}
+                                </option>
+
                                 {{/each}}
                             </select>
-                        </div> 
+                        </div>
 
                         <div class="form-group" id="updiv">
-                            <select class="select-css" name="contato" id="aqui" onChange="update2()" data-limit='200'> 
-                                <option value="" disabled selected>            Escolha o Produto</option>   
-                                
-                            </select>
-                        </div> 
+                            <select class="select-css" name="contato" id="aqui" onChange="update2()" data-limit='200'>
+                                <option value="" disabled selected> Escolha o Produto</option>
 
-                        <div class="form-group" >
-                            <select class="select-css" name="contato" id="list5" onChange="update2()">  
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <select class="select-css" name="contato" id="list5" onChange="update2()">
                                 <option value="" disabled selected>Defina Prioridade</option>
-                                <option id="2" >BÁSICO</option>
-                                <option id="1" >CRÍTICA</option>
-                                
-                            </select>
-                        </div> 
+                                <option id="2">BÁSICO</option>
+                                <option id="1">CRÍTICA</option>
 
-                        {{!-- armazena valores envio req.body insert  --}}
+                            </select>
+                        </div>
+
+                        {{!-- armazena valores envio req.body insert --}}
                         <div class="form-group">
                             <input hidden id="value">
                             <input hidden id="codparc" name="codparc">
-                            <input hidden id="codprod" name="codprod"> 
-                            <input hidden id="atualiza" name="atualiza" style='width:100%'>     
-                            <input hidden id="sla" name="sla">     
+                            <input hidden id="codprod" name="codprod">
+                            <input hidden id="atualiza" name="atualiza" style='width:100%'>
+                            <input hidden id="sla" name="sla">
 
-                            {{!-- exibição enderaço --}} 
-                            <input type="text" id="cidade" name="cidade" disabled="disabled" style='width:100%'>  
-                            <input type="text" id="logradouro" name="logradouro" disabled="disabled" style='width:100%'>  
-                            <input type="text" id="parceiro" name="parceiro" disabled="disabled" style='width:100%'> 
-                        </div> 
-                        
+                            {{!-- exibição enderaço --}}
+                            <input type="text" id="cidade" name="cidade" disabled="disabled" style='width:100%'>
+                            <input type="text" id="logradouro" name="logradouro" disabled="disabled" style='width:100%'>
+                            <input type="text" id="parceiro" name="parceiro" disabled="disabled" style='width:100%'>
+                        </div>
+
                         <div class="form-group">
                             <button class="btn btn-success btn-block">
                                 Gerar Incidentes
                             </button>
                         </div>
-                    </form>                   
-                    
+                    </form>
                 </div>
             </div>
         </div>
@@ -94,130 +87,106 @@
 </div>
 
 {{!-- RECEBE O VALOR INFORMADO NO SELECT A TRIBUI A INPUT PARA REGISTRAR O CODPARC --}}
-<script type="text/javascript">  
+<script type="text/javascript">
 
     function update() {
-				var select = document.getElementById('list'); 
-				var option = select.options[select.selectedIndex];
+        var select = document.getElementById('list');
+        var option = select.options[select.selectedIndex];
 
-                //busca valor contrato
-                var contrato = option.value;
-                var contr=contrato.toString();
-                console.log('valor contrato')
-                console.log(contr)   
-                
-                document.getElementById('value').value= option.value;
-				document.getElementById('codparc').value = option.id;
-                document.getElementById('codprod').value = option.title; 
+        //busca valor contrato
+        var contrato = option.value;
+        var contr = contrato.toString();
+        console.log('valor contrato')
+        console.log(contr)
 
-                document.getElementById('sdm').value;
-                 //busca o sla referente ao contrato
-                //var ren = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren');
-                var ren2 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren2');
-                var ren3 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren3');
-                var ren4 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren4');
+        document.getElementById('value').value = option.value;
+        document.getElementById('codparc').value = option.id;
+        document.getElementById('codprod').value = option.title;
 
-                //const slacc = parseInt(ren) 
-                //document.getElementById('sla').value = slacc
-                document.getElementById('cidade').value = ren2
-                document.getElementById('logradouro').value = ren3
-                document.getElementById('parceiro').value = ren4
+        document.getElementById('sdm').value;
+        //busca o sla referente ao contrato
+        //var ren = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren');
+        var ren2 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren2');
+        var ren3 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren3');
+        var ren4 = document.forms['frm_'].elements['list'].options[document.forms['frm_'].elements['list'].selectedIndex].getAttribute('ren4');
 
-                
+        //const slacc = parseInt(ren) 
+        //document.getElementById('sla').value = slacc
+        document.getElementById('cidade').value = ren2
+        document.getElementById('logradouro').value = ren3
+        document.getElementById('parceiro').value = ren4
 
+        //busca valor dos contatos
+        var select = document.getElementById('list2');
+        var option = select.options[select.selectedIndex];
+        var contatos = option.value
 
+        console.log('select contatos')
+        console.log(contatos)
 
+        const languagesList = contatos
 
+        console.log('impressao lista contatos languagesList')
+        console.log(languagesList)
 
+        //pega o select
+        var select = document.getElementById("list2");
+        //cria uma lista vazia 
+        var vlroption = []
 
-                //busca valor dos contatos
-                var select = document.getElementById('list2');                                              
-				var option = select.options[select.selectedIndex];
-                var contatos = option.value
+        //le o select e pega somente os valores e adiciona em uma nova lista
+        //console.log("porra")
+        for (i = 0; i < select.length; i = i + 1) {
+            vlroption.push(select.options[i].value)
+        }
 
-                console.log('select contatos')
-                console.log(contatos) 
+        //Limpa a Lista original
+        for (j = 0; j < select.length; j = j + 1) {
+            select.options.remove(j);
+        }
 
-                const languagesList = contatos
+        //le os dados que foram armazenados e insere na lista
+        console.log("Lista Preenchida")
+        for (k = 0; k < vlroption.length; k = k + 1) {
+            //console.log(vlroption[k])
+            if (vlroption[k].match(contr)) {
+                console.log(vlroption[k])
 
-                console.log('impressao lista contatos languagesList')
-                    console.log(languagesList)              
-
-                
-                //pega o select
-                var select = document.getElementById("list2");
-                //cria uma lista vazia 
-                var vlroption = []
-
-
-                //le o select e pega somente os valores e adiciona em uma nova lista
-                //console.log("porra")
-                for (i = 0; i < select.length; i = i + 1) {               
-                vlroption.push(select.options[i].value)
-                
-                }
-
-                //Limpa a Lista original
-                for (j = 0; j < select.length; j = j + 1) {
-                    select.options.remove(j);
-                }
-
-                //le os dados que foram armazenados e insere na lista
-                console.log("Lista Preenchida")
-                for (k =0; k < vlroption.length; k = k + 1){
-                        //console.log(vlroption[k])
-                            if(vlroption[k].match(contr)){
-                            console.log(vlroption[k])
-                            
-                        //insere os itens no select option
-                        var option = new Option(vlroption[k], vlroption[k]);
-                                var select = document.getElementById("aqui");
-                                select.add(option);
-                }
-                }  
-
-                var selects = document.querySelectorAll('[data-limit]');
-  
-                // percorre a lista de selects
-                [].forEach.call(selects, function(select){
-                    
-                    var limit = select.getAttribute('data-limit');
-                    
-                    // percorre a lista de options do select
-                    [].forEach.call(select.options, function(option){
-                    var text = option.innerHTML.substring(7, limit);
-                    option.innerHTML = text;
-                    });
-                }); 
-
-                 
-			} 
-            function update2(){
-                var select = document.getElementById('aqui'); 
-				var option = select.options[select.selectedIndex]; 
-                var novo= option.text.substr(0,5)
-                document.getElementById('atualiza').value= novo;
-
-                //busca valor sla
-                var select = document.getElementById('list5');                                              
-				var option = select.options[select.selectedIndex];
-                document.getElementById('sla').value = option.id
-                var priori = option.id
-
-                console.log('select prioridade')
-                console.log(priori) 
-
-
-
-                //var contr=option.text.toString();
-                //var ultimo = contr.substring(contr.lastIndexOf("_")+1); 
-                //document.getElementById('atualiza').value= ultimo;
+                //insere os itens no select option
+                var option = new Option(vlroption[k], vlroption[k]);
+                var select = document.getElementById("aqui");
+                select.add(option);
             }
+        }
 
-            
-            
-            
+        var selects = document.querySelectorAll('[data-limit]');
 
+        // percorre a lista de selects
+        [].forEach.call(selects, function (select) {
 
-            
-		</script>
+            var limit = select.getAttribute('data-limit');
+
+            // percorre a lista de options do select
+            [].forEach.call(select.options, function (option) {
+                var text = option.innerHTML.substring(7, limit);
+                option.innerHTML = text;
+            });
+        });
+    }
+
+    function update2() {
+        var select = document.getElementById('aqui');
+        var option = select.options[select.selectedIndex];
+        var novo = option.text.substr(0, 5)
+        document.getElementById('atualiza').value = novo;
+
+        //busca valor sla
+        var select = document.getElementById('list5');
+        var option = select.options[select.selectedIndex];
+        document.getElementById('sla').value = option.id
+        var priori = option.id
+
+        console.log('select prioridade')
+        console.log(priori)
+    }
+</script>

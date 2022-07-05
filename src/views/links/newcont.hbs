@@ -4,28 +4,28 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form action="/links/newcont" method="POST">                        
-                        
-                        
+                    <form action="/links/newcont" method="POST">
+
+
                         <div class="form-group">
-                            <select class="select-css" name="login" id="list" onChange="update()">                                
+                            <select class="select-css" name="login" id="list" onChange="update()">
                                 <option selected disabled>Usuário </option>
-                                
-                                {{#each lista}}                                    
-                                    <option value="{{CODLOGIN}}">
-                                                {{NOMEUSU}}
-                                    </option>                                   
-                                    
+
+                                {{#each lista}}
+                                <option value="{{CODLOGIN}}">
+                                    {{NOMEUSU}}
+                                </option>
+
                                 {{/each}}
                             </select>
-                        </div>                        
-                        
-                       {{!--  <div class="form-group">
-                            <input type="text" name="login" class="form-control" placeholder="Usuário" >
+                        </div>
+
+                        {{!-- <div class="form-group">
+                            <input type="text" name="login" class="form-control" placeholder="Usuário">
                         </div> --}}
                         <div class="form-group">
-                            <input type="text" name="contrato" class="form-control" placeholder="Contrato" >
-                        </div>                                         
+                            <input type="text" name="contrato" class="form-control" placeholder="Contrato">
+                        </div>
                         <input hidden id="value">
                         <div class="form-group">
                             <button class="btn btn-success btn-block">
@@ -41,15 +41,15 @@
 </div>
 
 {{!-- RECEBE O VALOR INFORMADO NO SELECT A TRIBUI A INPUT PARA REGISTRAR O CODPARC --}}
-<script type="text/javascript">   
-    
-    
+<script type="text/javascript">
+
+
     function update() {
-				var select = document.getElementById('list');
-				var option = select.options[select.selectedIndex];
+        var select = document.getElementById('list');
+        var option = select.options[select.selectedIndex];
 
-				document.getElementById('value').value = option.value;				
-			}
+        document.getElementById('value').value = option.value;
+    }
 
-			update();
-		</script>
+    update();
+</script>

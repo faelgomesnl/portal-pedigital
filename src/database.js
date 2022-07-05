@@ -1,7 +1,11 @@
 const sql = require('mssql');
-const { promisify }= require('util');
+const {
+  promisify
+} = require('util');
 
-const { database } = require('./keys');
+const {
+  database
+} = require('./keys');
 
 const pool = new sql.ConnectionPool(database)
 

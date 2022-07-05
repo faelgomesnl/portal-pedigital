@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
         cb(null, file.originalname + path.extname(file.originalname))
     }
 })
+
 const upload = multer({
     storage
 })
@@ -130,9 +131,6 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     const contato = req.body.atualiza;
     const slccont = req.body.sla;
 
-    const t1 = texto
-    const textofin = t1.replace("'", "`");
-
     //verificação cód prioridade sla
     const links2 = await pool.query(`SELECT DISTINCT 
     replace(rtrim(replace(TC.VALORTEMPO,'0',' ')),' ','0') AS VALORTEMPO   
@@ -146,13 +144,12 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     const prioridade = Object.values(links2.recordset[0])
 
     await pool.query(`INSERT INTO sankhya.TCSOSE (NUMOS,NUMCONTRATO,DHCHAMADA,DTPREVISTA,CODPARC,CODCONTATO,CODATEND,CODUSURESP,DESCRICAO,SITUACAO,CODCOS,CODCENCUS,CODOAT,POSSUISLA,AD_SDM) VALUES 
-    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${textofin}','P','',30101,1000000,'S','${sdm}');`);
+    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${texto}','P','',30101,1000000,'S','${sdm}');`);
     await pool.query(`INSERT INTO SANKHYA.TCSITE (NUMOS,NUMITEM,CODSERV,CODPROD,CODUSU,CODOCOROS,CODUSUREM,DHENTRADA,DHPREVISTA,CODSIT,COBRAR,RETRABALHO,PRIORIDADE) VALUES 
     ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),177,'N','N','${slccont}');`);
 
     req.flash('success', 'Ordem De Serviço Criada com Sucesso!!!!')
     res.redirect('/links')
-
 });
 
 //PAGINAS DATATABLES
@@ -347,7 +344,8 @@ router.get('/edit/:id', isLoggedIn, async (req, res) => {
     res.render('links/edit', {
         lista: links.recordset[0]
     })
-
+    /*//req.flash('success', 'Link Removed Successfully');
+    res.redirect('/links'); */
 });
 
 //update

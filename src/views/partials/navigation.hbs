@@ -1,42 +1,42 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand" href="/signin">
-      
+
       <img src="/img/lg1.png" alt="Logo Fazt" height="50" width="185">
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav"
-      aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ml-auto">
-        
+
         {{#if user.ADMINISTRADOR}}
 
-          <li class="nav-item">
-           <a class="nav-link" href="/links/allogin">Usuários</a>
-          </li>  
+        <li class="nav-item">
+          <a class="nav-link" href="/links/allogin">Usuários</a>
+        </li>
 
-          <li class="nav-item dropdown">
+        <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-          Cadastros
+            Cadastros
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/links/newuser">Cadastro Usuários</a>
-            <a class="dropdown-item" href="/links/newcont">Cadastro Contratos</a>            
+            <a class="dropdown-item" href="/links/newcont">Cadastro Contratos</a>
           </div>
 
-          <li class="nav-item">
-            <a class="nav-link" href="/logout">Logout</a>
-          </li>   
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
         </li>
-          {{else}}  
+        </li>
+        {{else}}
         {{#if user}}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
-          Incidentes
+            Incidentes
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/links">Incidentes Abertos</a>
@@ -45,16 +45,16 @@
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/links/orderserv">Abertura De Incidentes</a>
           </div>
-        </li>      
+        </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Logout</a>
-        </li>   
-        
+        </li>
+
         {{else}}
         <li class="nav-item">
           <a class="nav-link" href="/signin">Login</a>
         </li>
-       
+
         {{/if}}
         {{/if}}
       </ul>

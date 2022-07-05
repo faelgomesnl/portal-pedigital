@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { isLoggedIn } = require('../lib/auth');
+const {
+  isLoggedIn
+} = require('../lib/auth');
 
 // SIGNUP (cadastro)
-router.get('/signup', (req, res) => { 
+router.get('/signup', (req, res) => {
   res.render('auth/signup');
 });
 
@@ -33,7 +35,7 @@ router.get('/logout', (req, res) => {
   res.redirect('/signin');
 });
 
-router.get('/profile', isLoggedIn,  (req, res) => {
+router.get('/profile', isLoggedIn, (req, res) => {
   res.render('profile');
 });
 

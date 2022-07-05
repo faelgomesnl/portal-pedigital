@@ -1,17 +1,17 @@
 module.exports = {
-    database : {
+    database: {
         user: 'sa',
         password: 'SQL.M3t0d0@2021#',
-        server: '192.168.4.4', 
+        server: '192.168.4.4',
         database: 'MGE_PROD',
         connectionTimeout: 300000,
         requestTimeout: 300000,
         pool: {
-          idleTimeoutMillis: 300000,
-          max: 100
+            idleTimeoutMillis: 300000,
+            max: 100
         }
-        
-    } 
+
+    }
 };
 
 /* module.exports = {
