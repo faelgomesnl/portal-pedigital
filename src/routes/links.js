@@ -132,22 +132,105 @@ router.post('/orderserv', isLoggedIn, upload.single('file'), async (req, res) =>
     const slccont = req.body.sla;
     const userlog = req.body.loginuser;
 
-    //verificação cód prioridade sla
-    const links2 = await pool.query(`SELECT DISTINCT 
-    replace(rtrim(replace(TC.VALORTEMPO,'0',' ')),' ','0') AS VALORTEMPO   
-    FROM sankhya.AD_TBACESSO L
-    INNER JOIN sankhya.TCSCON CON ON (L.NUM_CONTRATO = CON.NUMCONTRATO)  
-    LEFT JOIN sankhya.TCSSLA SLA ON (SLA.NUSLA = CON.NUSLA)
-    LEFT JOIN sankhya.TCSRSL TC ON (SLA.NUSLA=TC.NUSLA)   
-    WHERE CON.NUMCONTRATO='${contrato}'   
-    AND CON.ATIVO = 'S'  
-    AND TC.PRIORIDADE = '${slccont}'`);
-    const prioridade = Object.values(links2.recordset[0])
+    const t1 = texto
+    const textofin = t1.replace("'", "`");
+
+    var pfinal
+    const jogo = [parseInt(contato)]
+    const sorteio = [42499, 42502, 42503, 43603, 42501, 42500]
+    const acertos = sorteio.filter(numero => jogo.includes(numero))
+
+    if (acertos.length === 0) {
+        pfinal = 42499
+    } else {
+        pfinal = contato
+    }
+
+    const links2 = await pool.query(`--VERSÃO FINAL
+    SELECT 
+    FORMAT(CASE 
+            WHEN us.SAIDA IS NULL THEN  DATEADD(minute, us.VALORTEMPO, GETDATE()) 
+            --COLOCAR OS MINUTOS QUE AINDA RESTAM PARA FINALIZAR 
+            ELSE
+                    CASE  
+                WHEN (DATEPART(DW,GETDATE() )) =5 THEN            
+                    CASE 
+                        --VERIFICA SE DA PRA DESCONTAR TUDO EM UM DIA SÓ
+                        WHEN ((us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) AND (GETDATE() <= us.ENTRADA_DIA))THEN DATEADD(minute, us.VALORTEMPO, us.ENTRADA_DIA) 
+                        WHEN (us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) THEN DATEADD(minute, us.VALORTEMPO,GETDATE())
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) <= 600) THEN DATEADD(minute, (us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA),us.ENTRADA_D1)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 601 AND 1200) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-600),us.ENTRADA_D1 +3)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 1201 AND 1800) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-1200),us.ENTRADA_D1 +4)
+                    END 
+                WHEN (DATEPART(DW,GETDATE() )) =6 THEN
+                    CASE 
+                        --VERIFICA SE DA PRA DESCONTAR TUDO EM UM DIA SÓ
+                        WHEN ((us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) AND (GETDATE() <= us.ENTRADA_DIA))THEN DATEADD(minute, us.VALORTEMPO, us.ENTRADA_DIA) 
+                        WHEN (us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) THEN DATEADD(minute, us.VALORTEMPO,GETDATE())
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) <= 600) THEN DATEADD(minute, (us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA),us.ENTRADA_D1 +3)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 601 AND 1200) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-600),us.ENTRADA_D1 +4)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 1201 AND 1800) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-1200),us.ENTRADA_D1 +5)
+                    END 
+                WHEN (DATEPART(DW,GETDATE() )) =4 THEN
+                    CASE 
+                        --VERIFICA SE DA PRA DESCONTAR TUDO EM UM DIA SÓ
+                        WHEN ((us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) AND (GETDATE() <= us.ENTRADA_DIA))THEN DATEADD(minute, us.VALORTEMPO, us.ENTRADA_DIA) 
+                        WHEN (us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) THEN DATEADD(minute, us.VALORTEMPO,GETDATE())
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) <= 600) THEN DATEADD(minute, (us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA),us.ENTRADA_D1)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 601 AND 1200) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-600),us.ENTRADA_D1 +2)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 1201 AND 1800) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-1200),us.ENTRADA_D1 +4)
+                    END
+                ELSE 
+                    CASE 
+                        --VERIFICA SE DA PRA DESCONTAR TUDO EM UM DIA SÓ
+                        WHEN ((us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) AND (GETDATE() <= us.ENTRADA_DIA))THEN DATEADD(minute, us.VALORTEMPO, us.ENTRADA_DIA) 
+                        WHEN (us.MINUTOS_RESTANTES_DIA >= us.VALORTEMPO) THEN DATEADD(minute, us.VALORTEMPO,GETDATE())
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) <= 600) THEN DATEADD(minute, (us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA),us.ENTRADA_D1)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 601 AND 1200) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-600),us.ENTRADA_D1 +2)
+                        WHEN ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA) BETWEEN 1201 AND 1800) THEN DATEADD(minute, ((us.VALORTEMPO - us.MINUTOS_RESTANTES_DIA)-1200),us.ENTRADA_D1 +3)
+                    END
+            END
+        END , 'MM/dd/yyyy HH:mm:ss') AS VALORTEMPO
+    FROM (
+        SELECT ROW_NUMBER() OVER(ORDER BY SAIDA DESC) AS Row,
+            PRIORIDADE,
+            (((TC.VALORTEMPO/100)*60) + RIGHT(TC.VALORTEMPO, 2) ) AS VALORTEMPO ,
+            convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(GETDATE() AS DATETIME), 111),' ',(LEFT(CH.ENTRADA, 1)+':'+RIGHT(CH.ENTRADA, 2))),111) AS ENTRADA_DIA,
+            convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(getdate() AS DATETIME), 111),' ',(LEFT(CH.SAIDA, 2)+':'+RIGHT(CH.SAIDA, 2))),111) AS SAIDA_DIA,
+            DATEDIFF(MI,
+                convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(GETDATE() AS DATETIME), 111),' ',(LEFT(CH.ENTRADA, 1)+':'+RIGHT(CH.ENTRADA, 2))),111),
+                convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(GETDATE() AS DATETIME), 111),' ',(LEFT(CH.SAIDA, 2)+':'+RIGHT(CH.SAIDA, 2))),111)
+            ) AS MINUTOS_TDIA_AT,
+            DATEDIFF(MI,
+                GETDATE(),
+                convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(getdate() AS DATETIME), 111),' ',(LEFT(CH.SAIDA, 2)+':'+RIGHT(CH.SAIDA, 2))),111)
+            )AS MINUTOS_RESTANTES_DIA,
+            convert(datetime,Concat(CONVERT(VARCHAR(10), CAST(DATEADD(DD,+1,GETDATE()) AS DATETIME), 111),' ',(LEFT(CH.ENTRADA, 1)+':'+RIGHT(CH.ENTRADA, 2))),111) AS ENTRADA_D1,
+            CH.SAIDA,
+            CH.ENTRADA,
+            CH.CODCARGAHOR,
+            SLA.NUSLA
+        FROM sankhya.AD_TBACESSO L
+            INNER JOIN sankhya.TCSCON CON ON (L.NUM_CONTRATO = CON.NUMCONTRATO)
+            LEFT JOIN sankhya.TCSSLA SLA ON (SLA.NUSLA = CON.NUSLA)
+            LEFT JOIN sankhya.TCSRSL TC ON (SLA.NUSLA=TC.NUSLA)
+            LEFT JOIN sankhya.TFPHOR CH ON (TC.CODCARGAHOR=CH.CODCARGAHOR)
+        WHERE
+         CON.NUMCONTRATO='${contrato}' 
+            AND TC.CODPROD = '${pfinal}'
+            AND TC.PRIORIDADE = '${slccont}'
+        GROUP BY PRIORIDADE, VALORTEMPO, CH.SAIDA,CH.ENTRADA,CH.CODCARGAHOR,SLA.NUSLA)us
+    WHERE Row = 1`);
+
+    var prioridade = Object.values(links2.recordset[0])
+
+    console.log('prioridade')
+    console.log(prioridade)
 
     await pool.query(`INSERT INTO sankhya.TCSOSE (NUMOS,NUMCONTRATO,DHCHAMADA,DTPREVISTA,CODPARC,CODCONTATO,CODATEND,CODUSURESP,DESCRICAO,SITUACAO,CODCOS,CODCENCUS,CODOAT,AD_LOGIN,POSSUISLA,AD_SDM) VALUES 
-    ('${numos}','${contrato}',GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),'${parceiro}',1,110,110,'${texto}','P','',30101,1000000,'${userlog}','S','${sdm}');`);
+    ('${numos}','${contrato}',GETDATE(),'${prioridade}','${parceiro}',1,110,110,'${textofin}','P','',30101,1000000,'${userlog}','S','${sdm}');`);
     await pool.query(`INSERT INTO SANKHYA.TCSITE (NUMOS,NUMITEM,CODSERV,CODPROD,CODUSU,CODOCOROS,CODUSUREM,DHENTRADA,DHPREVISTA,CODSIT,COBRAR,RETRABALHO,PRIORIDADE) VALUES 
-    ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),(SELECT DATEADD(HOUR,${prioridade},GETDATE())),177,'N','N','${slccont}');`);
+    ('${numos}',1,42505,'${contato}',1237,214,110,GETDATE(),'${prioridade}',177,'N','N','${slccont}');`);
 
     req.flash('success', 'Ordem De Serviço Criada com Sucesso!!!! Nº ', numos)
     res.redirect('/links')
